@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Data and model caches (re-downloadable)
+data_cache/
+.cache/
+chroma_db/
+
+# Results: raw outputs ignored, keep summaries
+results/*
+!results/.gitkeep
+!results/**/summary*.json
+!results/**/*.md
+
+# OS / editor
+.DS_Store
+.vscode/
