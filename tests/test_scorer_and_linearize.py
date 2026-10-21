@@ -82,3 +82,22 @@ def test_nulls_are_omitted_and_false_is_negated():
     # nulls never appear, in either polarity
     for absent in ("garage", "classy", "music", "Wednesday"):
         assert absent not in text
+
+
+# --- claim-level evaluation ----------------------------------------------------------------------
+
+
+def test_sentence_is_flagged_by_its_worst_claim_and_empty_sentences_never():
+    from src.data.ragtruth import HallucinationSpan, RagTruthExample
+    from src.eval.metrics import evaluate
+
+    resp = "Good part. Bad part here."
+    e = RagTruthExample("x", "s", "QA", "MARCO", "m", 0.7, "test", "good", resp, "", None, "",
+                        spans=[HallucinationSpan(11, 25, "Bad part here.", "Evident Conflict", False, False, None)])
+    rec = {"id": "x", "sentences": [
+        {"start": 0, "end": 10, "claims": []},  # e.g. "Sure!" -> no claims -> not flagged
+        {"start": 11, "end": 25, "claims": [{"per_passage": [[0.9, 0.0]]}, {"per_passage": [[0.0, 0.9]]}]},
+    ]}
+    m = evaluate([rec], {"x": e}, t_entail=0.5)
+    assert m["sentence_level"]["all"]["tp"] == 1 and m["sentence_level"]["all"]["fp"] == 0
+    assert m["type_confusion"] == {"conflict -> contradicted": 1}

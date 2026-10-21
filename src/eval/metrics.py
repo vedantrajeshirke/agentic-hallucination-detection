@@ -7,17 +7,28 @@ per-passage NLI maxima, so thresholds and rules can change without re-running th
 
 from __future__ import annotations
 
+import re
 from collections import Counter, defaultdict
 
 from src.data.ragtruth import RagTruthExample
 from src.verify.nli import NLIResult
 from src.verify.scorer import aggregate
 
+_ALNUM = re.compile(r"[A-Za-z0-9]")
+SEVERITY = ("contradicted", "unsupported", "supported")
+
 
 def gold_for_span(
     e: RagTruthExample, start: int, end: int, exclude_implicit_true: bool = False
 ) -> dict:
-    spans = [s for s in e.spans if s.start < end and start < s.end]
+    # an overlap must contain a letter or digit: some labels start with the previous
+    # sentence's final "." (error analysis 01, M-QA-04)
+    spans = [
+        s
+        for s in e.spans
+        if s.start < end and start < s.end
+        and _ALNUM.search(e.response[max(start, s.start) : min(end, s.end)])
+    ]
     if exclude_implicit_true:
         spans = [s for s in spans if not s.implicit_true]
     return {
@@ -48,7 +59,7 @@ def evaluate(
     tie_break: str = "max_prob",
     exclude_implicit_true: bool = False,
 ) -> dict:
-    """records: output rows of experiments/01_sentence_baseline.py (one per response)."""
+    """records: output rows of experiments/01 or 02 (one per response)."""
     sent = defaultdict(Counter)  # task -> tp/fp/fn
     resp = defaultdict(Counter)
     confusion = Counter()  # (gold type, predicted label) for gold-hallucinated sentences
@@ -58,12 +69,16 @@ def evaluate(
         any_pred = False
         for s in rec["sentences"]:
             gold = gold_for_span(e, s["start"], s["end"], exclude_implicit_true)
-            label = predict(s["per_passage"], t_entail, t_contradict, tie_break)
+            # sentence records carry either one score set (sentence = claim) or a list of claims
+            claim_scores = [c["per_passage"] for c in s["claims"]] if "claims" in s else [s["per_passage"]]
+            labels = [predict(pp, t_entail, t_contradict, tie_break) for pp in claim_scores]
+            # worst claim decides; a sentence with no claims (greeting, header) is never flagged
+            label = min(labels, key=SEVERITY.index) if labels else "supported"
             pred = label != "supported"
             any_pred |= pred
-            n_conflicting += (
-                max(x[0] for x in s["per_passage"]) >= t_entail
-                and max(x[1] for x in s["per_passage"]) >= t_contradict
+            n_conflicting += any(
+                max(x[0] for x in pp) >= t_entail and max(x[1] for x in pp) >= t_contradict
+                for pp in claim_scores
             )
             for task in (e.task_type, "all"):
                 sent[task]["tp" if pred and gold["hallucinated"] else "fp" if pred else "fn" if gold["hallucinated"] else "tn"] += 1

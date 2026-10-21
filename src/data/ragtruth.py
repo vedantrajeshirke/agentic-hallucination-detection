@@ -206,6 +206,24 @@ def make_dev_split(
     return new_train, dev
 
 
+
+def select(split: str, per_task: int | None = None, seed: int = 0) -> list[RagTruthExample]:
+    """Examples for an experiment: 'train' / 'dev' (source-grouped 10% of train) / 'test',
+    optionally `per_task` sampled per task with a fixed seed."""
+    if split == "test":
+        pool = load("test")
+    else:
+        train, dev = make_dev_split(load("train"), dev_frac=0.1, seed=seed)
+        pool = dev if split == "dev" else train
+    if per_task is None:
+        return pool
+    rng = random.Random(seed)
+    out = []
+    for task in TASKS:
+        group = [e for e in pool if e.task_type == task]
+        out += rng.sample(group, min(per_task, len(group)))
+    return out
+
 # ---------------------------------------------------------------------------------------------
 # Validation and statistics
 # ---------------------------------------------------------------------------------------------

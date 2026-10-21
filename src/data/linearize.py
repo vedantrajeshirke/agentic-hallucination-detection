@@ -113,7 +113,9 @@ def business_facts(info: dict, zero_rule: str = "closed") -> list[str]:
 
 def review_passages(info: dict) -> list[str]:
     return [
-        f"A {r['review_stars']:g}-star customer review from {r['review_date'][:10]}: "
-        f"{r['review_text'].strip()}"
+        # "A 5-star review" read as contradicting claims about the overall rating; stating it
+        # as the reviewer's own rating reduced that (error analysis 01, FA-D2T-02/09/14).
+        f"Customer review from {r['review_date'][:10]} (this reviewer's rating: "
+        f"{r['review_stars']:g} out of 5): {r['review_text'].strip()}"
         for r in info.get("review_info") or []
     ]
