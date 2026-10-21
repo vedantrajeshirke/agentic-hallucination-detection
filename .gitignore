@@ -11,7 +11,9 @@ data_cache/
 chroma_db/
 
 # Results: raw outputs ignored, keep summaries
-results/*
+# (directories must be un-ignored for the file exceptions below to apply)
+results/**
+!results/**/
 !results/.gitkeep
 !results/**/summary*.json
 !results/**/*.md

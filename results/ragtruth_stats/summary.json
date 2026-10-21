@@ -1,0 +1,175 @@
+{
+  "config": {
+    "ragtruth_commit": "c103204b9ce28d6bbad859304bf30de72b8ed8fe"
+  },
+  "stats": {
+    "n_responses": 17790,
+    "n_sources": 2965,
+    "responses_by_split": {
+      "train": 15090,
+      "test": 2700
+    },
+    "responses_by_task": {
+      "Summary": 5658,
+      "Data2txt": 6198,
+      "QA": 5934
+    },
+    "responses_by_model": {
+      "gpt-4-0613": 2965,
+      "gpt-3.5-turbo-0613": 2965,
+      "mistral-7B-instruct": 2965,
+      "llama-2-7b-chat": 2965,
+      "llama-2-13b-chat": 2965,
+      "llama-2-70b-chat": 2965
+    },
+    "quality": {
+      "good": 17617,
+      "truncated": 29,
+      "incorrect_refusal": 144
+    },
+    "sources_in_both_train_and_test": 0,
+    "hallucinated_response_rate": {
+      "overall": 0.431,
+      "test/Data2txt": 0.643,
+      "test/QA": 0.178,
+      "test/Summary": 0.227,
+      "train/Data2txt": 0.694,
+      "train/QA": 0.311,
+      "train/Summary": 0.311
+    },
+    "hallucinated_response_rate_by_model": {
+      "gpt-3.5-turbo-0613": 0.135,
+      "gpt-4-0613": 0.137,
+      "llama-2-13b-chat": 0.566,
+      "llama-2-70b-chat": 0.47,
+      "llama-2-7b-chat": 0.618,
+      "mistral-7B-instruct": 0.659
+    },
+    "spans_by_label_type": {
+      "Evident Conflict": 5324,
+      "Evident Baseless Info": 6233,
+      "Subtle Baseless Info": 2469,
+      "Subtle Conflict": 201
+    },
+    "spans_by_task_and_label_type": {
+      "QA": {
+        "Evident Baseless Info": 1559,
+        "Subtle Baseless Info": 858,
+        "Evident Conflict": 423,
+        "Subtle Conflict": 49
+      },
+      "Summary": {
+        "Evident Conflict": 727,
+        "Evident Baseless Info": 1057,
+        "Subtle Baseless Info": 199,
+        "Subtle Conflict": 89
+      },
+      "Data2txt": {
+        "Evident Baseless Info": 3617,
+        "Evident Conflict": 4174,
+        "Subtle Baseless Info": 1412,
+        "Subtle Conflict": 63
+      }
+    },
+    "conflict_vs_baseless": {
+      "conflict": 5525,
+      "baseless": 8702
+    },
+    "implicit_true_spans": 1906,
+    "due_to_null_spans": 1641,
+    "spans_per_hallucinated_response": {
+      "n": 7664,
+      "mean": 1.9,
+      "median": 1.0,
+      "p5": 1.0,
+      "p95": 4.0,
+      "max": 14
+    },
+    "span_length_words": {
+      "QA": {
+        "n": 2889,
+        "mean": 19.6,
+        "median": 14,
+        "p5": 2.0,
+        "p95": 55.0,
+        "max": 256
+      },
+      "Summary": {
+        "n": 2072,
+        "mean": 9.6,
+        "median": 8.0,
+        "p5": 2.0,
+        "p95": 23.0,
+        "max": 128
+      },
+      "Data2txt": {
+        "n": 9266,
+        "mean": 5.3,
+        "median": 4.0,
+        "p5": 1.0,
+        "p95": 14.0,
+        "max": 54
+      }
+    },
+    "response_length_words": {
+      "QA": {
+        "n": 5934,
+        "mean": 118.8,
+        "median": 112.0,
+        "p5": 19.0,
+        "p95": 231.0,
+        "max": 381
+      },
+      "Summary": {
+        "n": 5658,
+        "mean": 111.9,
+        "median": 100.0,
+        "p5": 52.0,
+        "p95": 213.0,
+        "max": 632
+      },
+      "Data2txt": {
+        "n": 6198,
+        "mean": 159.0,
+        "median": 145.0,
+        "p5": 99.0,
+        "p95": 244.0,
+        "max": 369
+      }
+    },
+    "context_length_words_per_source": {
+      "QA": {
+        "n": 989,
+        "mean": 235.8,
+        "median": 217,
+        "p5": 130.0,
+        "p95": 365.0,
+        "max": 498
+      },
+      "Summary": {
+        "n": 943,
+        "mean": 554.7,
+        "median": 428,
+        "p5": 213.0,
+        "p95": 1262.6,
+        "max": 1749
+      },
+      "Data2txt": {
+        "n": 1033,
+        "mean": 371.0,
+        "median": 336,
+        "p5": 205.7,
+        "p95": 639.5,
+        "max": 1271
+      }
+    },
+    "span_validation": {
+      "n_spans": 14227,
+      "offset_text_mismatch": 0,
+      "out_of_bounds": 0,
+      "mismatch_examples": [],
+      "overlapping_span_pairs": 65,
+      "responses_with_overlapping_spans": 62
+    }
+  }
+}
