@@ -49,12 +49,14 @@ before the system becomes too cautious to be useful.
 | LLM runtime | Ollama | local, no API cost |
 | Generator model | Llama 3.1 8B | agent + answer generation |
 | Embeddings | `nomic-embed-text` | via Ollama |
-| Entailment | DeBERTa-v3-MNLI | claim vs. passage, the core verifier |
+| Entailment | DeBERTa-v3-large NLI (`MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`, pinned) | claim vs. passage, the core verifier; base variant for quick dev checks |
 | Vector store | ChromaDB | local persistence |
 | Language | Python 3.11+ | |
 
-Everything runs locally. No paid API dependency — keep it that way, it matters for reproducibility
-and for the cost section of any write-up.
+No paid API dependency — keep it that way, it matters for reproducibility and for the cost section
+of any write-up. Development and small runs are local. Long NLI evaluation runs use a free Google
+Colab GPU: DeBERTa-v3-large on the M1 measured ~0.5 windows/s, which put a full RAGTruth test run
+at ~9–11 hours. Same code and pinned versions on both; record the device with every result.
 
 ---
 

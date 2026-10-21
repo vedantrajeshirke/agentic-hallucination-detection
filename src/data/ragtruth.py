@@ -14,11 +14,14 @@ from __future__ import annotations
 
 import json
 import random
+import re
 import statistics
 import urllib.request
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from src.data.linearize import business_facts, review_passages
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = REPO_ROOT / "data_cache" / "ragtruth"
@@ -70,10 +73,28 @@ class RagTruthExample:
     question: str | None  # QA only
     prompt: str
     spans: list[HallucinationSpan] = field(default_factory=list)
+    source_info: dict | str | None = field(default=None, repr=False)  # raw RAGTruth source_info
 
     @property
     def has_hallucination(self) -> bool:
         return bool(self.spans)
+
+
+def evidence_passages(e: RagTruthExample, zero_hours_rule: str = "closed") -> list[str]:
+    """The grounding evidence for one example, split into separately checkable passages.
+
+    QA: the 3 retrieved passages. Summary: the article (one passage; the NLI wrapper windows it).
+    Data2txt: the business record converted to sentences, then one passage per review.
+    """
+    if e.task_type == "QA":
+        parts = re.split(r"(?m)^passage \d+:", e.source_info["passages"])
+        return [p.strip() for p in parts if p.strip()]
+    if e.task_type == "Summary":
+        return [e.source_info.strip()]
+    if e.task_type == "Data2txt":
+        facts = " ".join(business_facts(e.source_info, zero_hours_rule))
+        return [facts, *review_passages(e.source_info)]
+    raise ValueError(f"unknown task_type {e.task_type!r}")
 
 
 def download(force: bool = False) -> Path:
@@ -98,8 +119,8 @@ def _context_and_question(source: dict) -> tuple[str, str | None]:
     if task == "QA":
         return info["passages"], info["question"]
     if task == "Data2txt":
-        # Structured business record (JSON). Serialised as-is; how to present JSON to an NLI
-        # model is an open design question for the verifier, not decided here.
+        # Raw JSON, kept for display. The verifier uses evidence_passages(), which converts it
+        # to sentences (src/data/linearize.py).
         return json.dumps(info, ensure_ascii=False, indent=1), None
     raise ValueError(f"unknown task_type {task!r}")
 
@@ -157,6 +178,7 @@ def load(split: str | None = None) -> list[RagTruthExample]:
                 question=question,
                 prompt=src["prompt"],
                 spans=_dedupe_spans(spans),
+                source_info=src["source_info"],
             )
         )
     return examples
