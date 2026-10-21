@@ -1,0 +1,199 @@
+{
+  "tuned_on": "/content/drive/MyDrive/agentic-hallucination/results/01_sentence_baseline/scores_dev_large_per_passage.jsonl",
+  "reported_on": "/content/drive/MyDrive/agentic-hallucination/results/01_sentence_baseline/scores_test_large_per_passage.jsonl",
+  "t_entail": 0.25,
+  "tune_f1": 0.3734,
+  "warning": null,
+  "main": {
+    "params": {
+      "t_entail": 0.25,
+      "t_contradict": 0.5,
+      "tie_break": "max_prob",
+      "exclude_implicit_true": false
+    },
+    "sentence_level": {
+      "Data2txt": {
+        "precision": 0.2908,
+        "recall": 0.765,
+        "f1": 0.4214,
+        "tp": 716,
+        "fp": 1746,
+        "fn": 220,
+        "n": 8218
+      },
+      "QA": {
+        "precision": 0.1429,
+        "recall": 0.7225,
+        "f1": 0.2387,
+        "tp": 263,
+        "fp": 1577,
+        "fn": 101,
+        "n": 5718
+      },
+      "Summary": {
+        "precision": 0.3838,
+        "recall": 0.2752,
+        "f1": 0.3205,
+        "tp": 71,
+        "fp": 114,
+        "fn": 187,
+        "n": 4946
+      },
+      "all": {
+        "precision": 0.234,
+        "recall": 0.6739,
+        "f1": 0.3474,
+        "tp": 1050,
+        "fp": 3437,
+        "fn": 508,
+        "n": 18882
+      }
+    },
+    "response_level": {
+      "Data2txt": {
+        "precision": 0.6743,
+        "recall": 0.962,
+        "f1": 0.7929,
+        "tp": 557,
+        "fp": 269,
+        "fn": 22,
+        "n": 900
+      },
+      "QA": {
+        "precision": 0.2573,
+        "recall": 0.9313,
+        "f1": 0.4032,
+        "tp": 149,
+        "fp": 430,
+        "fn": 11,
+        "n": 900
+      },
+      "Summary": {
+        "precision": 0.5385,
+        "recall": 0.4118,
+        "f1": 0.4667,
+        "tp": 84,
+        "fp": 72,
+        "fn": 120,
+        "n": 900
+      },
+      "all": {
+        "precision": 0.5061,
+        "recall": 0.8378,
+        "f1": 0.631,
+        "tp": 790,
+        "fp": 771,
+        "fn": 153,
+        "n": 2700
+      }
+    },
+    "type_confusion": {
+      "baseless -> contradicted": 155,
+      "baseless -> supported": 319,
+      "baseless -> unsupported": 495,
+      "both -> contradicted": 21,
+      "both -> supported": 7,
+      "both -> unsupported": 8,
+      "conflict -> contradicted": 274,
+      "conflict -> supported": 182,
+      "conflict -> unsupported": 97
+    },
+    "conflicting_sentences": 2033
+  },
+  "excluding_implicit_true": {
+    "params": {
+      "t_entail": 0.25,
+      "t_contradict": 0.5,
+      "tie_break": "max_prob",
+      "exclude_implicit_true": true
+    },
+    "sentence_level": {
+      "Data2txt": {
+        "precision": 0.2794,
+        "recall": 0.7696,
+        "f1": 0.41,
+        "tp": 688,
+        "fp": 1774,
+        "fn": 206,
+        "n": 8218
+      },
+      "QA": {
+        "precision": 0.125,
+        "recall": 0.7443,
+        "f1": 0.2141,
+        "tp": 230,
+        "fp": 1610,
+        "fn": 79,
+        "n": 5718
+      },
+      "Summary": {
+        "precision": 0.3838,
+        "recall": 0.2874,
+        "f1": 0.3287,
+        "tp": 71,
+        "fp": 114,
+        "fn": 176,
+        "n": 4946
+      },
+      "all": {
+        "precision": 0.2204,
+        "recall": 0.6821,
+        "f1": 0.3332,
+        "tp": 989,
+        "fp": 3498,
+        "fn": 461,
+        "n": 18882
+      }
+    },
+    "response_level": {
+      "Data2txt": {
+        "precision": 0.6574,
+        "recall": 0.9645,
+        "f1": 0.7819,
+        "tp": 543,
+        "fp": 283,
+        "fn": 20,
+        "n": 900
+      },
+      "QA": {
+        "precision": 0.2124,
+        "recall": 0.9248,
+        "f1": 0.3455,
+        "tp": 123,
+        "fp": 456,
+        "fn": 10,
+        "n": 900
+      },
+      "Summary": {
+        "precision": 0.5321,
+        "recall": 0.4235,
+        "f1": 0.4716,
+        "tp": 83,
+        "fp": 73,
+        "fn": 113,
+        "n": 900
+      },
+      "all": {
+        "precision": 0.4798,
+        "recall": 0.8397,
+        "f1": 0.6107,
+        "tp": 749,
+        "fp": 812,
+        "fn": 143,
+        "n": 2700
+      }
+    },
+    "type_confusion": {
+      "baseless -> contradicted": 147,
+      "baseless -> supported": 272,
+      "baseless -> unsupported": 443,
+      "both -> contradicted": 21,
+      "both -> supported": 7,
+      "both -> unsupported": 8,
+      "conflict -> contradicted": 274,
+      "conflict -> supported": 182,
+      "conflict -> unsupported": 96
+    },
+    "conflicting_sentences": 2033
+  }
+}

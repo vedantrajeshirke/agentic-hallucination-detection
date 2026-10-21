@@ -39,6 +39,21 @@ OUT_DIR = REPO_ROOT / "results" / "01_sentence_baseline"
 SEED = 0
 
 
+def _git_commit() -> str | None:
+    import subprocess
+
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, capture_output=True, text=True, check=True
+        ).stdout.strip()
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain"], cwd=REPO_ROOT, capture_output=True, text=True, check=True
+        ).stdout
+        return out + ("-dirty" if dirty.strip() else "")
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 def select_examples(split: str, per_task: int | None, seed: int = SEED):
     if split == "test":
         pool = load("test")
@@ -80,6 +95,7 @@ def cmd_run(args) -> None:
         "per_task": args.per_task,
         "seed": SEED,
         "ragtruth_commit": COMMIT,
+        "code_commit": _git_commit(),
         "zero_hours_rule": "closed",
         "claims": "sentences (src/claims/decompose.py:split_sentences)",
         **verifier.config(),

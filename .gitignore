@@ -16,6 +16,7 @@ results/**
 !results/**/
 !results/.gitkeep
 !results/**/summary*.json
+!results/**/config*.json
 !results/**/*.md
 
 # OS / editor

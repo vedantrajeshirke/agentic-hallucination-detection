@@ -1,0 +1,20 @@
+{
+  "experiment": "01_sentence_baseline",
+  "split": "test",
+  "per_task": null,
+  "seed": 0,
+  "ragtruth_commit": "c103204b9ce28d6bbad859304bf30de72b8ed8fe",
+  "zero_hours_rule": "closed",
+  "claims": "sentences (src/claims/decompose.py:split_sentences)",
+  "nli_model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+  "nli_revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+  "device": "cuda",
+  "fp16": true,
+  "mode": "per_passage",
+  "t_entail": 0.5,
+  "t_contradict": 0.5,
+  "tie_break": "max_prob",
+  "torch": "2.14.1+cu130",
+  "host": "63ef9c3e7da3",
+  "started": "2026-10-21T07:10:51+00:00"
+}
