@@ -40,6 +40,14 @@ SEED = 0
 EVIDENCE = {"passage": None, "s3": 3}
 
 
+def append_row(path: Path, row: dict) -> None:
+    """Append one JSON line and close the file. Closing after every row matters on Colab: Google
+    Drive uploads a file when it is closed, so a file held open for a whole run is lost if the
+    machine dies (this lost ~570 decomposed test responses on 2026-10-21)."""
+    with path.open("a") as f:
+        f.write(json.dumps(row) + "\n")
+
+
 def split_tag(split: str, per_task: int | None) -> str:
     return f"{split}{'' if per_task is None else f'_n{per_task}'}"
 
@@ -94,13 +102,12 @@ def cmd_decompose(args) -> None:
         }
 
     t0 = time.perf_counter()
-    with path.open("a") as out, ThreadPoolExecutor(args.workers) as pool:
+    with ThreadPoolExecutor(args.workers) as pool:
         futures = [pool.submit(work, e) for e in todo]
         for i, fut in enumerate(as_completed(futures), 1):
             row = fut.result()
             with lock:
-                out.write(json.dumps(row) + "\n")
-                out.flush()
+                append_row(path, row)
             _progress(i, len(todo), t0)
     statuses = [r["status"] for r in read_jsonl(path)]
     print(f"done. status counts: { {s: statuses.count(s) for s in set(statuses)} }")
@@ -140,32 +147,30 @@ def cmd_run(args) -> None:
     }, indent=2))
 
     t0 = time.perf_counter()
-    with path.open("a") as out:
-        for i, e in enumerate(todo, 1):
-            if args.claims == "llm":
-                sentences = decomposed[e.id]["sentences"]
-            else:
-                sentences = [
-                    {"start": c.span[0], "end": c.span[1], "claims": [c.text]} for c in split_sentences(e.response)
-                ]
-            flat = [c for s in sentences for c in s["claims"]]
-            raw = iter(verifier.raw_scores(flat, evidence_passages(e)) if flat else [])
-            rows = []
-            for s in sentences:
-                claims = []
-                for text in s["claims"]:
-                    per_premise = next(raw)
-                    claims.append({
-                        "text": text,
-                        "per_passage": [
-                            [round(max(w.entailment for w in wins), 5), round(max(w.contradiction for w in wins), 5)]
-                            for wins in per_premise
-                        ],
-                    })
-                rows.append({"start": s["start"], "end": s["end"], "claims": claims})
-            out.write(json.dumps({"id": e.id, "task": e.task_type, "sentences": rows}) + "\n")
-            out.flush()
-            _progress(i, len(todo), t0)
+    for i, e in enumerate(todo, 1):
+        if args.claims == "llm":
+            sentences = decomposed[e.id]["sentences"]
+        else:
+            sentences = [
+                {"start": c.span[0], "end": c.span[1], "claims": [c.text]} for c in split_sentences(e.response)
+            ]
+        flat = [c for s in sentences for c in s["claims"]]
+        raw = iter(verifier.raw_scores(flat, evidence_passages(e)) if flat else [])
+        rows = []
+        for s in sentences:
+            claims = []
+            for text in s["claims"]:
+                per_premise = next(raw)
+                claims.append({
+                    "text": text,
+                    "per_passage": [
+                        [round(max(w.entailment for w in wins), 5), round(max(w.contradiction for w in wins), 5)]
+                        for wins in per_premise
+                    ],
+                })
+            rows.append({"start": s["start"], "end": s["end"], "claims": claims})
+        append_row(path, {"id": e.id, "task": e.task_type, "sentences": rows})
+        _progress(i, len(todo), t0)
 
 
 def cmd_evaluate(args) -> None:
